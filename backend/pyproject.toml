@@ -6,6 +6,7 @@ authors = ["Matt Sárdi <sardi.matt@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+farm-haystack = {extras = ["faiss"], version = "^1.13.2"}
 
 [tool.poetry.dev-dependencies]
 
