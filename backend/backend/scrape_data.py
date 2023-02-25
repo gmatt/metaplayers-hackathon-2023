@@ -44,6 +44,10 @@ def scrape_one_page(url: str):
         if "data-jhid" in e.attrs:
             e.string = "[" + e.text + "](" + e.attrs["data-jhid"] + ")"
 
+    # Images.
+    for e in div.find_all("img"):
+        e.string = "![](https://njt.hu" + e.attrs["src"] + ")"
+
     for e in div.children:
         if type(e) is Tag:
             if "mainTitle" in e.attrs["class"]:
