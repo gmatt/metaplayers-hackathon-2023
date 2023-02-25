@@ -29,6 +29,7 @@ def index_documents():
         title = None
         subtitle = None
         jhid = None
+        last_line = ""
         for line in file.read_text().splitlines():
             if not line:
                 continue
@@ -43,6 +44,11 @@ def index_documents():
             elif line.startswith("<note>jogszabalySubtitle="):
                 subtitle = line[25:-7]
                 continue
+
+            if line.startswith(" "):
+                line = f"{last_line} [SEP] {line}"
+            else:
+                last_line = line
 
             docs.append(
                 Document(
