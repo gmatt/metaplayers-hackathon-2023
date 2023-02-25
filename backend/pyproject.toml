@@ -11,6 +11,8 @@ pyprojroot = "^0.2.0"
 beautifulsoup4 = "^4.11.2"
 tqdm = "^4.64.1"
 fastapi = {extras = ["all"], version = "^0.92.0"}
+openai = "^0.26.5"
+python-dotenv = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 
