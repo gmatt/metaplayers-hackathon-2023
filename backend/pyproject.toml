@@ -8,6 +8,7 @@ authors = ["Matt Sárdi <sardi.matt@gmail.com>"]
 python = "^3.9"
 farm-haystack = {extras = ["faiss"], version = "^1.13.2"}
 pyprojroot = "^0.2.0"
+beautifulsoup4 = "^4.11.2"
 
 [tool.poetry.dev-dependencies]
 
