@@ -1,0 +1,23 @@
+.nav {
+    background-color: #22262a;
+}
+
+@media screen and ( min-width: 576px ) {
+    .nav {
+        height: 100vh;
+    }
+}
+
+.main {
+    height: 100vh;
+}
+
+.textarea {
+    height: 3.9em;
+}
+
+.output {
+    /*flex-grow: 1;*/
+    max-height: calc(100vh - 80px);
+    overflow: auto;
+}
