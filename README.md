@@ -25,5 +25,5 @@
   - Copy `.env.example` to `.env` and fill values.
 - start
   - ```bash
-    poetry run uvicorn backend.api:app
+    poetry run start
     ```

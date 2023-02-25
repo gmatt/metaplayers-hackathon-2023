@@ -291,3 +291,6 @@ dist
 .pnp.*
 
 /temp
+
+/data/scraped/raw/*
+

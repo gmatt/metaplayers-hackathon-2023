@@ -21,4 +21,5 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
+start = "backend.scripts.api:main"
 scrape-all = "backend.scripts.scrape_all_current_hungarian:main"
