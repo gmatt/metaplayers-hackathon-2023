@@ -10,9 +10,13 @@ farm-haystack = {extras = ["faiss"], version = "^1.13.2"}
 pyprojroot = "^0.2.0"
 beautifulsoup4 = "^4.11.2"
 tqdm = "^4.64.1"
+fastapi = {extras = ["all"], version = "^0.92.0"}
 
 [tool.poetry.dev-dependencies]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+scrape-all = "backend.scripts.scrape_all_current_hungarian:main"
