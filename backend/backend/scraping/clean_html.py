@@ -54,7 +54,7 @@ def clean_html(html: str):
         e.string = "\n<note>jhId=" + e["id"] + "</note>\n"
     # Beginning of paragraph should be on margin, so points under it are identifiable.
     for e in div.find_all("div", class_="bekezdesNyito"):
-        if e.text[0] == " ":
+        if e.text and e.text[0] == " ":
             e.string = e.text[1:]
 
     # Save title and subtitle
@@ -79,5 +79,5 @@ if __name__ == "__main__":
     # clean_one_page("2002-35-00-00.html")
     # clean_one_page(random.choice(list(RAW_OUTPUT_DIR.glob("*"))).name)
     
-    # clean_all()
+    clean_all()
 
