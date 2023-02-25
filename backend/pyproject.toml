@@ -9,6 +9,7 @@ python = "^3.9"
 farm-haystack = {extras = ["faiss"], version = "^1.13.2"}
 pyprojroot = "^0.2.0"
 beautifulsoup4 = "^4.11.2"
+tqdm = "^4.64.1"
 
 [tool.poetry.dev-dependencies]
 
