@@ -6,7 +6,8 @@ import styles from "./App.module.css"
 import {Alert, Button, Col, Container, Form, Navbar, Row, Spinner, Stack} from "react-bootstrap";
 import * as Icon from 'react-bootstrap-icons';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+// const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+const BACKEND_URL = "https://4666-2001-4c4c-2215-5700-7d43-1bbe-4be9-b11d.eu.ngrok.io"
 
 interface Props {
 }
@@ -101,6 +102,7 @@ class App extends React.Component<Props, State> {
                                     href="https://github.com/gmatt/metaplayers-hackathon-2023"
                                     target="_blank"
                                 ><Icon.Git/> Git Repo</Button>
+                                <Row style={{color: "gray", paddingLeft: 2}}>Right now, only KRESZ and PTK is available.</Row>
                             </Stack>
                         </Container>
                     </Col>

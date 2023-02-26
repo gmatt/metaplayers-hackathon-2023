@@ -25,7 +25,7 @@ def create_question_for_gpt(query: str, candidate_results: list[dict]) -> str:
 
 Az előbbi bekezdéseket is figyelembe véve válaszold meg a következő kérdést.
 Amikor tudsz, helyezd el a fejezetek előtti hivatkozásokat a szövegben, például:
-Példa a hivatkozás formájára: "A külföldi adózásra a <1975-1-20-24#SZ6@BE1@POA> és <1975-1-20-24#SZ6@BE1@POB> tér ki, a <1975-1-20-24#SZ6@BE2@POA@APAB> pedig megtiltja az adónemek összevonását."
+Példa a hivatkozás formájára: "A külföldi adózásra a <1975-1-20-24#SZ6@BE1@POA> és a <1975-1-20-24#SZ6@BE1@POB> tér ki."
 
 Kérdés:
 {query}
@@ -60,18 +60,22 @@ def handle_request(query: str) -> str:
 
     # Find full text for search result.
     candidates = [
-                     next(y for y in response["documents"] if y["id"] == x["document_id"])
-                     for x in response["answers"]
-                 ][:5]
+        next(y for y in response["documents"] if y["id"] == x["document_id"])
+        for x in response["answers"]
+    ][:5]
 
     prompt = create_question_for_gpt(query, candidates)
 
     print(prompt)
 
-    completion = get_gpt_completion(
-        prompt,
-        max_tokens=400,
-    )
+    try:
+        completion = get_gpt_completion(
+            prompt,
+            max_tokens=400,
+        )
+    except:
+        print("There was error")
+        return "Error"
 
     print(completion)
 
