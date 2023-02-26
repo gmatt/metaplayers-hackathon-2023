@@ -14,8 +14,8 @@ def get_gpt_completion(
         openai.api_key = os.getenv("OPENAI_API_KEY")
 
     result = openai.Completion.create(
-        # model="text-davinci-003",
-        model="text-ada-001",
+        model="text-davinci-003",
+        # model="text-ada-001",
         prompt=prompt,
         max_tokens=max_tokens,
         temperature=0,

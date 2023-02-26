@@ -3,11 +3,32 @@ import os
 import requests
 from dotenv import load_dotenv
 
+from backend.answer_generation.gpt import get_gpt_completion
+
 RETRIEVAL_API_URL = None
 
 
-def create_question_for_gpt():
-    pass
+def create_question_for_gpt(query: str, candidate_results: list[dict]) -> str:
+    candidates = "\n".join(
+        "<"
+        + x["meta"]["name"].replace(".txt", "")
+        + "@"
+        + x["meta"]["jhid"]
+        + ">"
+        + "\n"
+        + x["content"]
+        for x in candidate_results
+    )
+
+    prompt = f"""{candidates}
+
+A kérdés a következő:
+{query}
+Hivatkozz a bekeztésekre, amikor csak lehetséges, ilyen formában, pl: <1975-1-20-24@SZ6@BE2>
+Adj részletes, jogi nyelvezetű, minden esetre kiterjedő választ.
+"""
+
+    return prompt
 
 
 def handle_request(query: str) -> str:
@@ -21,6 +42,28 @@ def handle_request(query: str) -> str:
         json={"query": query},
         timeout=120,
     )
+    response = response.json()
+    # print(response.json())
 
-    print(response.json())
-    return ""
+    # Find full text for search result.
+    candidates = [
+        next(y for y in response["documents"] if y["id"] == x["document_id"])
+        for x in response["answers"]
+    ][:5]
+
+    prompt = create_question_for_gpt(query, candidates)
+
+    print(prompt)
+
+    completion = get_gpt_completion(
+        prompt,
+        max_tokens=400,
+    )
+
+    print(completion)
+
+    return completion
+
+
+if __name__ == "__main__":
+    handle_request("Mit jelent az, ha a rendőr kinyújtott karjával maga felé int?")
