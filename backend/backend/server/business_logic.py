@@ -22,10 +22,12 @@ def create_question_for_gpt(query: str, candidate_results: list[dict]) -> str:
 
     prompt = f"""{candidates}
 
-A kérdés a következő:
+Az előbbi bekezdéseket is figyelembe véve válaszold meg a következő kérdést.
+Amikor tudsz, helyezd el a fejezetek előtti hivatkozásokat a szövegben, például:
+Példa a hivatkozás formájára: "A külföldi adózásra a <1975-1-20-24@SZ6@BE1@POA> és <1975-1-20-24@SZ6@BE1@POB> tér ki, a <1975-1-20-24@SZ6@BE2@POA@APAB> pedig megtiltja az adónemek összevonását."
+
+A kérdés:
 {query}
-Hivatkozz a bekeztésekre, amikor csak lehetséges, ilyen formában, pl: <1975-1-20-24@SZ6@BE2>
-Adj részletes, jogi nyelvezetű, minden esetre kiterjedő választ.
 """
 
     return prompt
