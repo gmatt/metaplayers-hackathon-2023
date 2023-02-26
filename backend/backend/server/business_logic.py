@@ -1,4 +1,5 @@
 import os
+import re
 
 import requests
 from dotenv import load_dotenv
@@ -12,7 +13,7 @@ def create_question_for_gpt(query: str, candidate_results: list[dict]) -> str:
     candidates = "\n".join(
         "<"
         + x["meta"]["name"].replace(".txt", "")
-        + "@"
+        + "#"
         + x["meta"]["jhid"]
         + ">"
         + "\n"
@@ -24,13 +25,23 @@ def create_question_for_gpt(query: str, candidate_results: list[dict]) -> str:
 
 Az előbbi bekezdéseket is figyelembe véve válaszold meg a következő kérdést.
 Amikor tudsz, helyezd el a fejezetek előtti hivatkozásokat a szövegben, például:
-Példa a hivatkozás formájára: "A külföldi adózásra a <1975-1-20-24@SZ6@BE1@POA> és <1975-1-20-24@SZ6@BE1@POB> tér ki, a <1975-1-20-24@SZ6@BE2@POA@APAB> pedig megtiltja az adónemek összevonását."
+Példa a hivatkozás formájára: "A külföldi adózásra a <1975-1-20-24#SZ6@BE1@POA> és <1975-1-20-24#SZ6@BE1@POB> tér ki, a <1975-1-20-24#SZ6@BE2@POA@APAB> pedig megtiltja az adónemek összevonását."
 
-A kérdés:
+Kérdés:
 {query}
+Válasz:
 """
 
     return prompt
+
+
+def format_result(completion: str) -> str:
+    completion = re.sub(
+        "<([^>]+)>",
+        "<a href='https://njt.hu/jogszabaly/\\1' class='ref-result' target='_blank'>\\1</a>",
+        completion,
+    )
+    return completion
 
 
 def handle_request(query: str) -> str:
@@ -49,9 +60,9 @@ def handle_request(query: str) -> str:
 
     # Find full text for search result.
     candidates = [
-        next(y for y in response["documents"] if y["id"] == x["document_id"])
-        for x in response["answers"]
-    ][:5]
+                     next(y for y in response["documents"] if y["id"] == x["document_id"])
+                     for x in response["answers"]
+                 ][:5]
 
     prompt = create_question_for_gpt(query, candidates)
 
@@ -63,6 +74,8 @@ def handle_request(query: str) -> str:
     )
 
     print(completion)
+
+    completion = format_result(completion)
 
     return completion
 

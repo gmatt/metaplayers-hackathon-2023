@@ -21,6 +21,10 @@ class RequestModel(BaseModel):
     query: str
 
 
+class ResultModel(BaseModel):
+    completion: str
+
+
 @app.post("/question")
 async def question(request: RequestModel):
-    return handle_request(request.query)
+    return ResultModel(completion=handle_request(request.query))

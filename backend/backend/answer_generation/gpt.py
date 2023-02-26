@@ -8,7 +8,7 @@ def get_gpt_completion(
     prompt: str,
     max_tokens: int = 16,
     stop=None,
-) -> dict:
+) -> str:
     if not openai.api_key:
         load_dotenv()
         openai.api_key = os.getenv("OPENAI_API_KEY")

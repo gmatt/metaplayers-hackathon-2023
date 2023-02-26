@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React from 'react';
+import "./App.css"
 import styles from "./App.module.css"
 import {Alert, Button, Col, Container, Form, Navbar, Row, Spinner, Stack} from "react-bootstrap";
 import * as Icon from 'react-bootstrap-icons';
@@ -23,11 +24,12 @@ class App extends React.Component<Props, State> {
     state = new State();
 
     submit = async () => {
+        const query = this.state.query;
         await this.setState({
             ...this.state,
             query: "",
             loading: true,
-            outputMessages: [...this.state.outputMessages, {sender: "user", content: this.state.query}],
+            outputMessages: [...this.state.outputMessages, {sender: "user", content: query}],
         });
         let result: string;
         try {
@@ -36,9 +38,9 @@ class App extends React.Component<Props, State> {
                 headers: {
                     "Content-Type": "application/json",
                 }, body: JSON.stringify({
-                    query: this.state.query,
+                    query,
                 })
-            })).text();
+            })).json();
         } catch (e) {
             await this.setState({
                 ...this.state,
@@ -52,7 +54,8 @@ class App extends React.Component<Props, State> {
                 ...this.state.outputMessages,
                 {
                     sender: "bot",
-                    content: result!,
+                    // @ts-ignore
+                    content: result && result.completion,
                 }]
         });
     }
@@ -110,7 +113,8 @@ class App extends React.Component<Props, State> {
                                             if (message.sender === "user") {
                                                 return <Alert variant="light" key={key}>{message.content}</Alert>
                                             } else {
-                                                return <Alert variant="secondary" key={key}>{message.content}</Alert>
+                                                return <div className="alert alert-secondary" role="alert"
+                                                            dangerouslySetInnerHTML={{__html: message.content}}></div>
                                             }
                                         })}
                                     </>
