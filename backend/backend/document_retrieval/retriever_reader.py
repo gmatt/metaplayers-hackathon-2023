@@ -1,7 +1,7 @@
 from typing import Callable
 
 from haystack import Document
-from haystack.document_stores import InMemoryDocumentStore
+from haystack.document_stores import ElasticsearchDocumentStore
 from haystack.nodes import EmbeddingRetriever, FARMReader
 from haystack.pipelines import ExtractiveQAPipeline
 
@@ -9,8 +9,8 @@ from backend.scraping.clean_html import CLEANED_OUTPUT_DIR
 
 INDEX_DOCUMENTS_PATH = CLEANED_OUTPUT_DIR
 
-document_store = InMemoryDocumentStore()
-# document_store = ElasticsearchDocumentStore()
+# document_store = InMemoryDocumentStore()
+document_store = ElasticsearchDocumentStore()
 
 retriever = EmbeddingRetriever(
     document_store=document_store,
@@ -79,10 +79,13 @@ def get_qa_pipeline() -> Callable[[str], dict]:
 
     pipe = ExtractiveQAPipeline(reader, retriever)
 
-    def predict(query: str) -> dict:
+    def predict(query: str, retriever_top_k: int, reader_top_k: int) -> dict:
         return pipe.run(
             query=query,
-            params={"Retriever": {"top_k": 10}, "Reader": {"top_k": 5}},
+            params={
+                "Retriever": {"top_k": retriever_top_k},
+                "Reader": {"top_k": reader_top_k},
+            },
         )
 
     return predict

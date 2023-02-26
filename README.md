@@ -26,4 +26,11 @@
 - start
   - ```bash
     poetry run start
+    
+    poetry run uvicorn backend.document_retrieval.api:app --port 8001
+    
+    poetry run uvicorn backend.server.api:app --host 0.0.0.0
     ```
+- scraping
+  - `mkdir -p data/scraped/raw`
+  - `poetry run scrape-all`

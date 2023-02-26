@@ -10,7 +10,6 @@ app = FastAPI()
 
 class RequestModel(BaseModel):
     query: str
-    # TODO Unused.
     retriever_top_k: int = 10
     reader_top_k: int = 5
 
@@ -21,10 +20,18 @@ model: Optional[Callable] = None
 @app.on_event("startup")
 async def startup_event():
     global model
-    index_documents()
     model = get_qa_pipeline()
+
+
+@app.post("/create-index")
+async def index():
+    index_documents()
 
 
 @app.post("/question")
 async def question(request: RequestModel):
-    return model(request.query)
+    return model(
+        query=request.query,
+        retriever_top_k=request.retriever_top_k,
+        reader_top_k=request.reader_top_k,
+    )
