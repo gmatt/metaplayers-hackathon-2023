@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from backend.server.business_logic import handle_request
+
 app = FastAPI()
 
 origins = ["*"]
@@ -21,4 +23,4 @@ class RequestModel(BaseModel):
 
 @app.post("/question")
 async def question(request: RequestModel):
-    return "hello"
+    return handle_request(request.query)
