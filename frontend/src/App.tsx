@@ -13,23 +13,48 @@ interface Props {
 class State {
     public query: string = "";
     public loading: boolean = false;
+    public outputMessages: {
+        sender: "user" | "bot",
+        content: string,
+    }[] = [];
 }
 
 class App extends React.Component<Props, State> {
     state = new State();
 
     submit = async () => {
-        await this.setState({...this.state, "loading": true});
-        const res = await (await fetch(BACKEND_URL + "/question", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            }, body: JSON.stringify({
-                query: this.state.query,
-            })
-        })).text();
-        console.log(res)
-        await this.setState({...this.state, "loading": false});
+        await this.setState({
+            ...this.state,
+            query: "",
+            loading: true,
+            outputMessages: [...this.state.outputMessages, {sender: "user", content: this.state.query}],
+        });
+        let result: string;
+        try {
+            result = await (await fetch(BACKEND_URL + "/question", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                }, body: JSON.stringify({
+                    query: this.state.query,
+                })
+            })).text();
+        } catch (e) {
+            await this.setState({
+                ...this.state,
+                outputMessages: [...this.state.outputMessages, {sender: "bot", content: "Error\n" + String(e)}]
+            });
+        }
+        await this.setState({
+            ...this.state,
+            loading: false,
+            outputMessages: [
+                ...this.state.outputMessages,
+                {
+                    sender: "bot",
+                    content: result!,
+                }]
+        });
     }
 
     render() {
@@ -57,8 +82,22 @@ class App extends React.Component<Props, State> {
                                     }}>JoGPTár</span>
                                 </Navbar.Brand>
                                 <div className="hr"/>
-                                <Button variant="dark">Menu</Button>
-                                <Button variant="dark">Options</Button>
+                                <Button
+                                    style={{textAlign: "left"}}
+                                    variant="dark"
+                                    onClick={() => this.setState(new State())}
+                                ><Icon.ArrowClockwise/> Reset</Button>
+                                <Button
+                                    style={{textAlign: "left"}}
+                                    variant="dark" href="https://njt.hu/"
+                                    target="_blank"
+                                ><Icon.Archive/> Corpus Source</Button>
+                                <Button
+                                    style={{textAlign: "left"}}
+                                    variant="dark"
+                                    href="https://github.com/gmatt/metaplayers-hackathon-2023"
+                                    target="_blank"
+                                ><Icon.Git/> Git Repo</Button>
                             </Stack>
                         </Container>
                     </Col>
@@ -66,27 +105,21 @@ class App extends React.Component<Props, State> {
                         <Stack className={styles.main}>
                             <Container className={styles.output}>
                                 <Container className="col-md-7 mx-auto">
-
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
-                                    <Alert variant="light">Hello there</Alert>
-                                    <Alert variant="secondary">Hello there</Alert>
+                                    <>
+                                        {this.state.outputMessages.map((message, key) => {
+                                            if (message.sender === "user") {
+                                                return <Alert variant="light" key={key}>{message.content}</Alert>
+                                            } else {
+                                                return <Alert variant="secondary" key={key}>{message.content}</Alert>
+                                            }
+                                        })}
+                                    </>
                                     {
                                         this.state.loading
                                             ?
-                                            <div style={{textAlign: "right", marginRight: 5}}><Spinner/></div>
+                                            <div style={{textAlign: "right", marginRight: 5, marginTop: 5}}>
+                                                <Spinner/>
+                                            </div>
                                             :
                                             ""
                                     }
@@ -102,8 +135,10 @@ class App extends React.Component<Props, State> {
                                                       ...this.state,
                                                       "query": e.target.value
                                                   })}
+                                                  onKeyDown={e => (e.keyCode === 13) && this.submit()}
                                     />
-                                    <Button onClick={this.submit}><Icon.Send/>Send</Button>
+                                    <Button onClick={this.submit}
+                                            disabled={!this.state.query.length}><Icon.Send/>Send</Button>
                                 </Stack>
                             </Container>
                         </Stack>
